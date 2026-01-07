@@ -6,7 +6,7 @@
     <title>Chris Rocks Concrete | Driveways, Stairs, Sidewalks</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&family=Montserrat:wght@300;600;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -31,20 +31,47 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
             z-index: 1000;
-            padding: 1.2rem 5%;
+            padding: 1rem 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #2c3e50;
-            letter-spacing: 1px;
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            height: 50px;
+            width: auto;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .logo-main {
+            font-family: 'Teko', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        .logo-sub {
+            font-family: 'Teko', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #ff6b35;
+            letter-spacing: 3px;
         }
 
         .nav-links {
@@ -56,17 +83,17 @@
 
         .nav-links a {
             text-decoration: none;
-            color: #2c3e50;
+            color: #fff;
             font-weight: 600;
             transition: color 0.3s;
         }
 
         .nav-links a:hover {
-            color: #e74c3c;
+            color: #ff6b35;
         }
 
         .btn-nav {
-            background: #e74c3c;
+            background: #ff6b35;
             color: white !important;
             padding: 0.6rem 1.5rem;
             border-radius: 5px;
@@ -74,12 +101,12 @@
         }
 
         .btn-nav:hover {
-            background: #c0392b;
+            background: #e55a28;
             transform: translateY(-2px);
         }
 
         .hero {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -101,21 +128,34 @@
             background-image: url('https://images.unsplash.com/photo-1628624747278-224ee8fa1f0d?auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
-            opacity: 0.15;
+            opacity: 0.2;
             z-index: 0;
         }
 
         .hero-content {
             position: relative;
             z-index: 1;
-            max-width: 800px;
+            max-width: 900px;
+        }
+
+        .hero-logo {
+            width: 280px;
+            margin: 0 auto 2rem;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
         }
 
         .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
+            font-family: 'Teko', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
             margin-bottom: 1.5rem;
-            line-height: 1.2;
+            line-height: 1.1;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 .accent {
+            color: #ff6b35;
         }
 
         .hero p {
@@ -132,8 +172,8 @@
         }
 
         .btn-secondary {
-            background: transparent;
-            border: 2px solid white;
+            background: #ff6b35;
+            border: 2px solid #ff6b35;
             color: white;
             padding: 1rem 2.5rem;
             text-decoration: none;
@@ -144,8 +184,8 @@
         }
 
         .btn-secondary:hover {
-            background: white;
-            color: #2c3e50;
+            background: transparent;
+            color: #ff6b35;
             transform: translateY(-2px);
         }
 
@@ -155,10 +195,17 @@
 
         .section-title {
             text-align: center;
-            font-size: 2.5rem;
-            font-weight: 800;
+            font-family: 'Teko', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
             margin-bottom: 3rem;
-            color: #2c3e50;
+            color: #1a1a1a;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .section-title .accent {
+            color: #ff6b35;
         }
 
         .services-grid {
@@ -174,19 +221,38 @@
             border-radius: 10px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             transition: transform 0.3s, box-shadow 0.3s;
-            border-top: 4px solid #e74c3c;
+            border-top: 5px solid #ff6b35;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,107,53,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .service-card:hover::before {
+            left: 100%;
         }
 
         .service-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(255,107,53,0.2);
         }
 
         .service-card h3 {
-            font-size: 1.5rem;
+            font-family: 'Teko', sans-serif;
+            font-size: 2rem;
             margin-bottom: 1rem;
-            color: #2c3e50;
+            color: #1a1a1a;
             font-weight: 700;
+            letter-spacing: 1px;
         }
 
         .service-card p {
@@ -209,10 +275,17 @@
         }
 
         .work-text h2 {
-            font-size: 2.5rem;
+            font-family: 'Teko', sans-serif;
+            font-size: 3rem;
             margin-bottom: 1.5rem;
-            color: #2c3e50;
-            font-weight: 800;
+            color: #1a1a1a;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .work-text h2 .accent {
+            color: #ff6b35;
         }
 
         .work-text p {
@@ -238,19 +311,43 @@
         }
 
         .contact-bg {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://images.unsplash.com/photo-1628624747278-224ee8fa1f0d?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
         }
 
         .contact-container {
             text-align: center;
             max-width: 800px;
+            position: relative;
+            z-index: 1;
         }
 
         .contact-container h2 {
-            font-size: 2.5rem;
+            font-family: 'Teko', sans-serif;
+            font-size: 3rem;
             margin-bottom: 1rem;
-            font-weight: 800;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .contact-container h2 .accent {
+            color: #ff6b35;
         }
 
         .contact-container > p {
@@ -279,6 +376,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
+            color: #ff6b35;
         }
 
         .link-large {
@@ -290,11 +388,11 @@
         }
 
         .link-large:hover {
-            color: #e74c3c;
+            color: #ff6b35;
         }
 
         footer {
-            background: #1a252f;
+            background: #0d0d0d;
             color: white;
             text-align: center;
             padding: 2rem;
@@ -332,11 +430,15 @@
             }
             
             .section-title {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
             
             .services-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .hero-logo {
+                width: 200px;
             }
         }
 
@@ -364,12 +466,34 @@
                 flex-direction: column;
                 gap: 2rem;
             }
+
+            .logo-img {
+                height: 40px;
+            }
+
+            .logo-main {
+                font-size: 1.4rem;
+            }
+
+            .logo-sub {
+                font-size: 1rem;
+            }
+
+            .hero-logo {
+                width: 180px;
+            }
         }
     </style>
 </head>
 <body>
     <nav>
-        <div class="logo">CHRIS ROCKS</div>
+        <div class="logo-container">
+            <img src="https://raw.githubusercontent.com/user-attachments/assets/logo-placeholder" alt="Chris Rocks Concrete Logo" class="logo-img">
+            <div class="logo-text">
+                <div class="logo-main">CHRIS ROCKS</div>
+                <div class="logo-sub">CONCRETE</div>
+            </div>
+        </div>
         <ul class="nav-links">
             <li><a href="#services">Services</a></li>
             <li><a href="#work">Our Work</a></li>
@@ -378,16 +502,17 @@
     </nav>
     <header class="hero">
         <div class="hero-content">
-            <h1>Solid Foundations.<br>Concrete Results.</h1>
-            <p>Expert craftsmanship in driveways, stairs, and sidewalks.</p>
+            <img src="https://raw.githubusercontent.com/user-attachments/assets/logo-placeholder" alt="Chris Rocks Concrete" class="hero-logo">
+            <h1><span class="accent">Solid</span> Foundations.<br><span class="accent">Concrete</span> Results.</h1>
+            <p>Expert craftsmanship in driveways, stairs, sidewalks, and more!</p>
             <div class="cta-group">
-                <a href="#contact" class="btn-secondary">Email Us</a>
+                <a href="#contact" class="btn-secondary">Get Your Free Quote</a>
             </div>
         </div>
     </header>
     <section id="services" class="section-pad">
         <div class="container">
-            <h2 class="section-title">What We Do</h2>
+            <h2 class="section-title">What We <span class="accent">Do</span></h2>
             <div class="services-grid">
                 <div class="service-card">
                     <h3>Driveways</h3>
@@ -406,7 +531,7 @@
     </section>
     <section id="work" class="work-section">
         <div class="work-text">
-            <h2>Quality Set in Stone.</h2>
+            <h2>Quality Set in <span class="accent">Stone</span>.</h2>
             <p>We pride ourselves on efficiency, cleanliness, and precision. Whether it's a repair or a new pour, we treat your property with respect.</p>
         </div>
         <div class="work-image">
@@ -415,7 +540,7 @@
     </section>
     <section id="contact" class="section-pad contact-bg">
         <div class="container contact-container">
-            <h2>Get A Free Quote</h2>
+            <h2>Get A <span class="accent">Free Quote</span></h2>
             <p>Ready to start your project? Contact Chris today.</p>
             
             <div class="contact-methods">

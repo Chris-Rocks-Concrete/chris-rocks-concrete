@@ -274,11 +274,33 @@
             max-width: 900px;
         }
 
-        .hero-logo {
-            width: 440px;
-            margin: 0 auto 2rem;
-            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
-        }
+        /* Replace your existing .hero-logo rule with this: */
+
+.hero-logo {
+    max-width: 440px;  /* Changed from width to max-width */
+    width: 100%;       /* Makes it responsive */
+    height: auto;      /* Maintains aspect ratio */
+    margin: 0 auto 2rem;
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
+    display: block;    /* Ensures proper centering */
+}
+
+/* Update mobile breakpoints for better scaling */
+@media (max-width: 768px) {
+    .hero-logo {
+        max-width: 280px;  /* Changed from fixed 200px */
+        width: 90%;        /* Gives some breathing room on sides */
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-logo {
+        max-width: 240px;  /* Changed from fixed 160px */
+        width: 85%;        /* Slightly smaller on very small screens */
+    }
+}
+		
+		
 
         .hero h1 {
             font-family: 'Teko', sans-serif;

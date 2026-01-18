@@ -248,18 +248,7 @@
             display: block;
             position: relative;
             filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
-            animation: logoZoom 6s ease-in-out infinite, logoGlow 4s ease-in-out infinite alternate, logoEntrance 1.2s ease-out;
-        }
-
-        @keyframes logoEntrance {
-            0% {
-                opacity: 0;
-                transform: scale(0.5) rotate(-10deg);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) rotate(0);
-            }
+            animation: logoZoom 6s ease-in-out infinite, logoGlow 4s ease-in-out infinite alternate, fadeIn 1.2s ease-out;
         }
 
         .hero-logo::before {
@@ -331,17 +320,6 @@
 
         .hero h1 .accent {
             color: #fdd722;
-            display: inline-block;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 10px rgba(253, 215, 34, 0.5);
-            }
-            to {
-                text-shadow: 0 0 20px rgba(253, 215, 34, 0.8), 0 0 30px rgba(253, 215, 34, 0.4);
-            }
         }
 
         .hero p {
@@ -1054,7 +1032,6 @@
             <li><a href="#contact" class="btn-nav">Get a Quote</a></li>
         </ul>
     </nav>
-
     <header class="hero">
         <div class="hero-content">
             <img src="ChrisRocksConcrete.png" alt="Chris Rocks Concrete - Licensed Concrete Contractor Haddon Township NJ" class="hero-logo">
@@ -1066,7 +1043,6 @@
             </div>
         </div>
     </header>
-
     <section id="services" class="section-pad">
         <div class="container">
             <h2 class="section-title">Our <span class="accent">Services</span></h2>
@@ -1082,7 +1058,7 @@
                 </div>
                 <div class="service-card">
                     <h3>Walkways &amp; Sidewalks</h3>
-                    <p>Safe, inviting paths connecting your home and garden with clean lines and smooth finishes.</p>
+                    <p>Safe, inviting paths connecting your home and garden with clean lines and smooth finishes. </p>
                 </div>
                 <div class="service-card">
                     <h3>Concrete Steps</h3>
@@ -1092,31 +1068,30 @@
                     <h3>Sealing &amp; Resurfacing</h3>
                     <p>Protect your investment from weather and wear, or give old concrete a fresh new look without a full tear-out.</p>
                 </div>
+				
                 <div class="service-card">
                     <h3>Let's Talk About Your Project</h3>
                     <p>From small repairs to full concrete installations, Chris Rocks delivers durable results you can trust.</p>
                 </div>
             </div>
-            <div class="service-areas">
+			<div class="service-areas">
                 <strong>Proudly Serving:</strong> Oaklyn, Collingswood, Westmont, Haddonfield, Audubon, Haddon Heights, Cherry Hill &amp; All of Haddon Township
             </div>
         </div>
     </section>
-
     <section id="work" class="work-section">
         <div class="work-text">
             <h2>Why Choose <span class="accent">Chris Rocks?</span></h2>
-            <p><strong>💎 Quality Craftsmanship:</strong> We take pride in every detail—no messy edges or sloppy pours. Just detailed finishing that stands the test of time.</p>
-            <p><strong>🤝 Local &amp; Reliable:</strong> We show up on time, stay on budget, treat your property like our own, and leave a clean job site.</p>
-            <p><strong>📅 Now Accepting Spring Bookings:</strong> Secure your spot for spring concrete projects! We're scheduling now for the upcoming season.</p>
-            <p><strong>📞 Call Today:</strong> <a href="tel:2673935049">267-393-5049</a></p>
-            <p><strong>📧 Not Ready to Call? No Problem.</strong> Use the form below to send us a message. Let us know what you're looking for and we'll be in touch shortly to answer your questions or schedule a free estimate.</p>
+          <p><strong>💎 Quality Craftsmanship:</strong> We take pride in every detail—no messy edges or sloppy pours. Just detailed finishing that stands the test of time.</p>
+          <p><strong>🤝 Local &amp; Reliable:</strong> We show up on time, stay on budget, treat your property like our own, and leave a clean job site.</p>
+			<p><strong>📅 Now Accepting Spring Bookings:</strong> Secure your spot for spring concrete projects! We're scheduling now for the upcoming season.</p>
+          <p><strong>📞 Call Today:</strong> <a href="tel:2673935049">267-393-5049</a></p>
+		<p><strong>📧 Not Ready to Call? No Problem.</strong> Use the form below to send us a message. Let us know what you're looking for and we'll be in touch shortly to answer your questions or schedule a free estimate.</p>	
         </div>
         <div class="work-image">
             <img src="driveway.jpg" alt="Concrete driveway work by Chris Rocks Concrete">
         </div>
     </section>
-
     <section id="contact" class="section-pad contact-bg">
         <div class="container contact-container">
             <h2>We Don't Just Pour. <span class="accent">We rock.</span></h2>
@@ -1162,13 +1137,11 @@
             </div>
         </div>
     </section>
-
     <footer>
         <p>&copy; 2026 Chris Rocks Concrete. Now Accepting Spring Bookings - Concrete Contractor serving Oaklyn, Collingswood, Westmont, Haddonfield, Audubon &amp; Haddon Heights and ALL of Haddon Township</p>
-        <p style="margin-top: 0.5rem; font-size: 0.9rem;">Driveways | Patios | Pool Decks | Stamped Concrete | Walkways | Retaining Walls</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">Driveways &amp; Extensions | Slabs &amp; Foundations | Repairs &amp; Resurfacing | Walkways &amp; Sidewalks | Steps</p>
         <p style="margin-top: 0.5rem;"><a href="tel:2673935049">Call: 267-393-5049</a> | <a href="mailto:chris@chrisrocksconcrete.com">chris@chrisrocksconcrete.com</a></p>
     </footer>
-
     <script>
         // Mobile menu toggle
         const mobileMenu = document.getElementById('mobile-menu');
@@ -1195,30 +1168,6 @@
                     behavior: 'smooth'
                 });
             });
-        });
-
-        // Scroll animation observer
-        const observerOptions = {
-            threshold: 0.2,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        // Observe all animated elements
-        document.querySelectorAll('.section-title, .service-card, .service-areas, .work-text, .work-image, .contact-container h2, .contact-container > p, .contact-form, .contact-divider, .method').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Add staggered delays to service cards
-        document.querySelectorAll('.service-card').forEach((card, index) => {
-            card.style.transitionDelay = `${index * 0.1}s`;
         });
     </script>
 </body>

@@ -307,15 +307,15 @@
             margin: 0 auto 2rem;
             filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
             display: block;
-            animation: logoFloat 3s ease-in-out infinite;
+            animation: logoBreath 4s ease-in-out infinite;
         }
 
-        @keyframes logoFloat {
+        @keyframes logoBreath {
             0%, 100% {
-                transform: translateY(0);
+                transform: scale(1);
             }
             50% {
-                transform: translateY(-10px);
+                transform: scale(1.05);
             }
         }
 
@@ -406,6 +406,12 @@
             color: #1a1a1a;
             letter-spacing: 2px;
             text-transform: uppercase;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .section-title.animate {
+            animation: fadeInUp 0.8s ease-out forwards;
         }
 
         .section-title .accent {
@@ -418,6 +424,12 @@
             margin-bottom: .25rem;
             font-size: 1.1rem;
             color: #555;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .service-areas.animate {
+            animation: fadeInUp 0.8s ease-out forwards;
         }
 
         .service-areas strong {
@@ -440,6 +452,22 @@
             border-top: 5px solid #fdd722;
             position: relative;
             overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .service-card.animate:nth-child(1) { animation: fadeInUpCard 0.6s ease-out 0.1s forwards; }
+        .service-card.animate:nth-child(2) { animation: fadeInUpCard 0.6s ease-out 0.2s forwards; }
+        .service-card.animate:nth-child(3) { animation: fadeInUpCard 0.6s ease-out 0.3s forwards; }
+        .service-card.animate:nth-child(4) { animation: fadeInUpCard 0.6s ease-out 0.4s forwards; }
+        .service-card.animate:nth-child(5) { animation: fadeInUpCard 0.6s ease-out 0.5s forwards; }
+        .service-card.animate:nth-child(6) { animation: fadeInUpCard 0.6s ease-out 0.6s forwards; }
+
+        @keyframes fadeInUpCard {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .service-card::before {
@@ -488,6 +516,19 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        .work-text.animate {
+            animation: slideInLeft 0.8s ease-out forwards;
+        }
+
+        @keyframes slideInLeft {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .work-text h2 {
@@ -509,7 +550,15 @@
             color: #555;
             line-height: 1.8;
             margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateX(-20px);
         }
+
+        .work-text.animate p:nth-of-type(1) { animation: slideInLeft 0.6s ease-out 0.2s forwards; }
+        .work-text.animate p:nth-of-type(2) { animation: slideInLeft 0.6s ease-out 0.3s forwards; }
+        .work-text.animate p:nth-of-type(3) { animation: slideInLeft 0.6s ease-out 0.4s forwards; }
+        .work-text.animate p:nth-of-type(4) { animation: slideInLeft 0.6s ease-out 0.5s forwards; }
+        .work-text.animate p:nth-of-type(5) { animation: slideInLeft 0.6s ease-out 0.6s forwards; }
 
         .work-text p strong {
             color: #1a1a1a;
@@ -528,6 +577,19 @@
         .work-image {
             position: relative;
             overflow: hidden;
+            opacity: 0;
+            transform: translateX(30px);
+        }
+
+        .work-image.animate {
+            animation: slideInRight 0.8s ease-out forwards;
+        }
+
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .work-image img {
@@ -575,6 +637,19 @@
             font-weight: 700;
             letter-spacing: 2px;
             text-transform: uppercase;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        .contact-container h2.animate {
+            animation: zoomIn 0.6s ease-out forwards;
+        }
+
+        @keyframes zoomIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .contact-container h2 .accent {
@@ -584,7 +659,11 @@
         .contact-container > p {
             font-size: 1.2rem;
             margin-bottom: 3rem;
-            opacity: 0.9;
+            opacity: 0;
+        }
+
+        .contact-container > p.animate {
+            animation: fadeInUp 0.8s ease-out 0.2s forwards;
         }
 
         .contact-form {
@@ -594,6 +673,12 @@
             padding: 2.5rem;
             border-radius: 10px;
             backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .contact-form.animate {
+            animation: fadeInUp 0.8s ease-out 0.4s forwards;
         }
 
         .form-group {
@@ -684,6 +769,11 @@
             gap: 3rem;
             flex-wrap: wrap;
             margin-top: 2rem;
+            opacity: 0;
+        }
+
+        .contact-methods.animate {
+            animation: fadeInUp 0.8s ease-out 0.6s forwards;
         }
 
         .method {
@@ -1026,6 +1116,25 @@
                     behavior: 'smooth'
                 });
             });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.section-title, .service-card, .service-areas, .work-text, .work-image, .contact-container h2, .contact-container > p, .contact-form, .contact-methods').forEach(el => {
+            observer.observe(el);
         });
     </script>
 </body>

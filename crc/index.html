@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chris Rocks Concrete - Quote Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-yellow: #FFD700;
+            --dark-gray: #1a1a1a;
+            --medium-gray: #2a2a2a;
+            --light-gray: #e0e0e0;
+            --accent-orange: #FF8C00;
+            --text-light: #ffffff;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #2a2a2a 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 140, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 10px 30px rgba(255, 215, 0, 0.3));
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 10px 30px rgba(255, 215, 0, 0.3));
+            }
+            to {
+                filter: drop-shadow(0 10px 40px rgba(255, 215, 0, 0.5));
+            }
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            letter-spacing: 3px;
+            color: var(--primary-yellow);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--light-gray);
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: rgba(42, 42, 42, 0.8);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.2);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .card-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            color: var(--primary-yellow);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--light-gray);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: rgba(15, 15, 15, 0.6);
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-yellow);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23FFD700' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 3rem;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .price-slider {
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(to right, 
+                rgba(255, 215, 0, 0.3) 0%, 
+                rgba(255, 215, 0, 0.6) 50%, 
+                rgba(255, 140, 0, 0.8) 100%);
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .price-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-orange) 100%);
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.5);
+            border: 3px solid var(--dark-gray);
+            transition: all 0.2s ease;
+        }
+
+        .price-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.8);
+        }
+
+        .price-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-orange) 100%);
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.5);
+            border: 3px solid var(--dark-gray);
+            transition: all 0.2s ease;
+        }
+
+        .price-slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.8);
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--light-gray);
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+
+        .addon-range {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .addon-slider-container {
+            display: none;
+        }
+
+        .addon-slider-container.active {
+            display: block;
+        }
+
+        .addon-slider {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            margin-top: 0.5rem;
+        }
+
+        .addon-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--accent-orange);
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(255, 140, 0, 0.4);
+            border: 2px solid var(--dark-gray);
+        }
+
+        .addon-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--accent-orange);
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(255, 140, 0, 0.4);
+            border: 2px solid var(--dark-gray);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            background: rgba(15, 15, 15, 0.4);
+            border-radius: 8px;
+            border: 2px solid rgba(255, 215, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.75rem;
+            cursor: pointer;
+            accent-color: var(--primary-yellow);
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 0.9rem;
+            flex: 1;
+        }
+
+        .addon-price {
+            color: var(--accent-orange);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .summary {
+            position: sticky;
+            top: 2rem;
+        }
+
+        .summary-content {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 140, 0, 0.1) 100%);
+            border: 2px solid var(--primary-yellow);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            font-weight: 500;
+            color: var(--light-gray);
+        }
+
+        .summary-value {
+            font-weight: 700;
+            color: var(--primary-yellow);
+            font-size: 1.1rem;
+        }
+
+        .total-row {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--primary-yellow);
+        }
+
+        .total-row .summary-label {
+            font-size: 1.3rem;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1px;
+            color: var(--text-light);
+        }
+
+        .total-row .summary-value {
+            font-size: 1.8rem;
+            font-family: 'Bebas Neue', sans-serif;
+        }
+
+        .specs-display {
+            background: rgba(15, 15, 15, 0.6);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 4px solid var(--primary-yellow);
+        }
+
+        .specs-title {
+            font-weight: 700;
+            color: var(--primary-yellow);
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+            color: var(--light-gray);
+        }
+
+        .spec-value {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        button {
+            padding: 1rem 2rem;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-orange) 100%);
+            color: var(--dark-gray);
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(255, 215, 0, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            border: 2px solid var(--primary-yellow);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .client-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary {
+                position: static;
+            }
+
+            .client-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .logo {
+                max-width: 280px;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, var(--accent-orange) 100%);
+            color: var(--dark-gray);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.5);
+            font-weight: 600;
+            transform: translateX(400px);
+            transition: transform 0.4s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" 
+                 alt="Chris Rocks Concrete" 
+                 class="logo"
+                 id="logo">
+            <h1>Quote Calculator</h1>
+            <p class="subtitle">Professional Concrete Estimating Tool</p>
+        </header>
+
+        <div class="main-grid">
+            <!-- Left Column: Input Form -->
+            <div>
+                <div class="card">
+                    <h2 class="card-title">Project Details</h2>
+                    
+                    <div class="form-group">
+                        <label for="projectType">Project Type</label>
+                        <select id="projectType" onchange="updateSpecs()">
+                            <option value="">Select project type...</option>
+                            <optgroup label="Driveways & Extensions">
+                                <option value="driveway-standard">Standard Broom Finish Driveway</option>
+                                <option value="driveway-reinforced">Reinforced/Heavy Prep Driveway</option>
+                                <option value="driveway-decorative">Decorative Driveway (Stamped/Stained)</option>
+                            </optgroup>
+                            <optgroup label="Slabs & Foundations">
+                                <option value="slab-basic">Shed Slab/Basic Flatwork</option>
+                                <option value="slab-garage">Garage Slab (Thicker/Reinforced)</option>
+                                <option value="foundation">Foundation w/ Footings</option>
+                            </optgroup>
+                            <optgroup label="Walkways & Sidewalks">
+                                <option value="walkway-standard">Standard Walkway/Sidewalk</option>
+                                <option value="walkway-decorative">Decorative Walkway (Curves/Border)</option>
+                            </optgroup>
+                            <optgroup label="Concrete Steps">
+                                <option value="steps-simple">Simple Steps (1-2 Steps)</option>
+                                <option value="steps-multiple">Multiple Steps/Landing</option>
+                                <option value="steps-decorative">Decorative/Custom Steps</option>
+                            </optgroup>
+                            <optgroup label="Sealing & Resurfacing">
+                                <option value="sealing">Concrete Sealing</option>
+                                <option value="resurface-light">Light Resurfacing/Skim Coat</option>
+                                <option value="resurface-heavy">Heavy Repair + Decorative Overlay</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="areaGroup">
+                        <label for="area" id="areaLabel">Area (square feet)</label>
+                        <input type="number" id="area" placeholder="Enter area in sq ft" min="0" step="0.01" oninput="calculateQuote()">
+                        
+                        <div style="margin-top: 1rem;">
+                            <button type="button" onclick="toggleDimensionCalculator()" style="padding: 0.5rem 1rem; font-size: 0.9rem; width: 100%;" class="btn-secondary">
+                                <span>📐 Dimension Calculator</span>
+                            </button>
+                        </div>
+
+                        <div id="dimensionCalculator" style="display: none; margin-top: 1rem; padding: 1rem; background: rgba(15, 15, 15, 0.6); border-radius: 8px; border: 2px solid rgba(255, 215, 0, 0.2);">
+                            <label style="margin-bottom: 0.5rem; display: block; color: var(--primary-yellow); font-weight: 600;">Shape:</label>
+                            <select id="shapeType" onchange="updateDimensionInputs()" style="margin-bottom: 1rem;">
+                                <option value="rectangle">Rectangle</option>
+                                <option value="circle">Circle</option>
+                                <option value="triangle">Triangle</option>
+                            </select>
+
+                            <div id="rectangleInputs">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                                    <div>
+                                        <label style="font-size: 0.85rem;">Length (feet)</label>
+                                        <input type="number" id="length" step="0.1" min="0" placeholder="0" oninput="calculateAreaFromDimensions()">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 0.85rem;">Width (feet)</label>
+                                        <input type="number" id="width" step="0.1" min="0" placeholder="0" oninput="calculateAreaFromDimensions()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="circleInputs" style="display: none;">
+                                <label style="font-size: 0.85rem;">Diameter (feet)</label>
+                                <input type="number" id="diameter" step="0.1" min="0" placeholder="0" oninput="calculateAreaFromDimensions()">
+                            </div>
+
+                            <div id="triangleInputs" style="display: none;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                                    <div>
+                                        <label style="font-size: 0.85rem;">Base (feet)</label>
+                                        <input type="number" id="base" step="0.1" min="0" placeholder="0" oninput="calculateAreaFromDimensions()">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 0.85rem;">Height (feet)</label>
+                                        <input type="number" id="height" step="0.1" min="0" placeholder="0" oninput="calculateAreaFromDimensions()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 0.75rem; padding: 0.75rem; background: rgba(255, 215, 0, 0.1); border-radius: 6px; text-align: center;">
+                                <span style="color: var(--light-gray); font-size: 0.85rem;">Calculated Area: </span>
+                                <span id="calculatedArea" style="color: var(--primary-yellow); font-weight: 700; font-size: 1.1rem;">0 sq ft</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="priceRangeControl" class="form-group" style="display: none;">
+                        <label for="pricePerSqFt">
+                            Price per Square Foot: 
+                            <span id="priceDisplay" style="color: var(--primary-yellow); font-weight: 700; font-size: 1.1rem;">$0</span>
+                        </label>
+                        <input type="range" id="pricePerSqFt" class="price-slider" min="8" max="12" step="0.5" value="10" oninput="updatePriceDisplay(); calculateQuote()">
+                        <div class="range-labels">
+                            <span id="minPrice">$8</span>
+                            <span id="maxPrice">$12</span>
+                        </div>
+                    </div>
+
+                    <div id="specsDisplay" class="specs-display" style="display: none;">
+                        <div class="specs-title">Project Specifications</div>
+                        <div id="specsContent"></div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 2rem;">
+                    <h2 class="card-title">Add-Ons</h2>
+                    
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="removal" onchange="toggleAddon('removal'); calculateQuote()">
+                            <label for="removal" style="flex: 1;">
+                                Removal/Demo
+                                <div class="addon-price" id="removalPrice">$2-4/sq ft</div>
+                                <div class="addon-slider-container" id="removalSlider">
+                                    <input type="range" class="addon-slider" id="removalRange" min="2" max="4" step="0.25" value="3" oninput="updateAddonPrice('removal'); calculateQuote()">
+                                    <div class="range-labels">
+                                        <span>$2/sq ft</span>
+                                        <span id="removalValue">$3/sq ft</span>
+                                        <span>$4/sq ft</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pump" onchange="toggleAddon('pump'); calculateQuote()">
+                            <label for="pump" style="flex: 1;">
+                                Pump Truck
+                                <div class="addon-price" id="pumpPrice">$800-1,500</div>
+                                <div class="addon-slider-container" id="pumpSlider">
+                                    <input type="range" class="addon-slider" id="pumpRange" min="800" max="1500" step="50" value="1150" oninput="updateAddonPrice('pump'); calculateQuote()">
+                                    <div class="range-labels">
+                                        <span>$800</span>
+                                        <span id="pumpValue">$1,150</span>
+                                        <span>$1,500</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="fiber" onchange="toggleAddon('fiber'); calculateQuote()">
+                            <label for="fiber" style="flex: 1;">
+                                Fiber Reinforcement
+                                <div class="addon-price" id="fiberPrice">$8-12/yd³</div>
+                                <div class="addon-slider-container" id="fiberSlider">
+                                    <input type="range" class="addon-slider" id="fiberRange" min="8" max="12" step="0.5" value="10" oninput="updateAddonPrice('fiber'); calculateQuote()">
+                                    <div class="range-labels">
+                                        <span>$8/yd³</span>
+                                        <span id="fiberValue">$10/yd³</span>
+                                        <span>$12/yd³</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="extraRebar" onchange="toggleAddon('extraRebar'); calculateQuote()">
+                            <label for="extraRebar" style="flex: 1;">
+                                Extra Rebar
+                                <div class="addon-price" id="extraRebarPrice">$0.75-1.50/sq ft</div>
+                                <div class="addon-slider-container" id="extraRebarSlider">
+                                    <input type="range" class="addon-slider" id="extraRebarRange" min="0.75" max="1.50" step="0.05" value="1.125" oninput="updateAddonPrice('extraRebar'); calculateQuote()">
+                                    <div class="range-labels">
+                                        <span>$0.75/sq ft</span>
+                                        <span id="extraRebarValue">$1.13/sq ft</span>
+                                        <span>$1.50/sq ft</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sealer" onchange="toggleAddon('sealer'); calculateQuote()">
+                            <label for="sealer" style="flex: 1;">
+                                Sealer
+                                <div class="addon-price" id="sealerPrice">$1.50-3/sq ft</div>
+                                <div class="addon-slider-container" id="sealerSlider">
+                                    <input type="range" class="addon-slider" id="sealerRange" min="1.5" max="3" step="0.25" value="2.25" oninput="updateAddonPrice('sealer'); calculateQuote()">
+                                    <div class="range-labels">
+                                        <span>$1.50/sq ft</span>
+                                        <span id="sealerValue">$2.25/sq ft</span>
+                                        <span>$3/sq ft</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 2rem;">
+                    <h2 class="card-title">Client Information</h2>
+                    
+                    <div class="client-info-grid">
+                        <div class="form-group">
+                            <label for="clientName">Client Name *</label>
+                            <input type="text" id="clientName" placeholder="Enter client name">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientPhone">Phone Number *</label>
+                            <input type="tel" id="clientPhone" placeholder="(555) 123-4567">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="clientEmail">Email Address</label>
+                        <input type="email" id="clientEmail" placeholder="client@example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectAddress">Project Address *</label>
+                        <textarea id="projectAddress" placeholder="Enter complete project address"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Additional Notes</label>
+                        <textarea id="notes" placeholder="Any special requirements or notes..."></textarea>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 2rem;">
+                    <h2 class="card-title">Business Information</h2>
+                    
+                    <div class="client-info-grid">
+                        <div class="form-group">
+                            <label for="businessPhone">Your Phone Number</label>
+                            <input type="tel" id="businessPhone" placeholder="(555) 987-6543" value="(555) 987-6543">
+                        </div>
+                        <div class="form-group">
+                            <label for="businessEmail">Your Email</label>
+                            <input type="email" id="businessEmail" placeholder="info@chrisrocksconcrete.com" value="info@chrisrocksconcrete.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="licenseNumber">License Number (Optional)</label>
+                        <input type="text" id="licenseNumber" placeholder="License #12345">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Summary and Actions -->
+            <div class="summary">
+                <div class="card">
+                    <h2 class="card-title">Quote Summary</h2>
+                    
+                    <div class="summary-content">
+                        <div class="summary-row">
+                            <span class="summary-label">Base Cost:</span>
+                            <span class="summary-value" id="baseCost">$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Add-Ons:</span>
+                            <span class="summary-value" id="addonsCost">$0.00</span>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span class="summary-label">Total Estimate:</span>
+                            <span class="summary-value" id="totalCost">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div id="breakdown" style="margin-top: 1.5rem; display: none;">
+                        <div class="specs-title">Cost Breakdown</div>
+                        <div id="breakdownContent"></div>
+                    </div>
+
+                    <div class="button-group" style="margin-top: 2rem;">
+                        <button class="btn-primary" onclick="generatePDF()">
+                            <span>Export PDF</span>
+                        </button>
+                        <button class="btn-secondary" onclick="resetForm()">
+                            <span>Reset</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // Logo data URL for PDF generation
+        let logoDataURL = null;
+        
+        // Load logo from same directory as HTML file
+        const logoImg = document.getElementById('logo');
+        logoImg.onload = function() {
+            // Convert the loaded image to a data URL for use in PDF
+            const canvas = document.createElement('canvas');
+            canvas.width = logoImg.naturalWidth;
+            canvas.height = logoImg.naturalHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(logoImg, 0, 0);
+            try {
+                logoDataURL = canvas.toDataURL('image/png');
+            } catch (e) {
+                console.error('Failed to convert logo to data URL:', e);
+            }
+        };
+        logoImg.onerror = function() {
+            console.error('Failed to load logo. Make sure ChrisRocksConcrete_TextOnly.png is in the same folder as this HTML file.');
+        };
+        // Use relative path - logo should be in same folder as HTML file
+        logoImg.src = 'ChrisRocksConcrete_TextOnly.png';
+
+        const projectSpecs = {
+            'driveway-standard': {
+                name: 'Standard Broom Finish Driveway',
+                category: 'Driveways & Extensions',
+                thickness: '5-6"',
+                base: '6-8" compacted stone',
+                finish: 'Broom finish',
+                priceRange: [10, 14],
+                pricingType: 'sqft'
+            },
+            'driveway-reinforced': {
+                name: 'Reinforced/Heavy Prep Driveway',
+                category: 'Driveways & Extensions',
+                thickness: '6"',
+                base: '8" compacted stone',
+                extras: 'Thickened edges, heavy base prep',
+                priceRange: [12, 18],
+                pricingType: 'sqft'
+            },
+            'driveway-decorative': {
+                name: 'Decorative Driveway (Stamped/Stained)',
+                category: 'Driveways & Extensions',
+                thickness: '5-6"',
+                finish: 'Stamped/stained',
+                notes: 'Sealing recommended after 28 days',
+                priceRange: [16, 28],
+                pricingType: 'sqft'
+            },
+            'slab-basic': {
+                name: 'Shed Slab/Basic Flatwork',
+                category: 'Slabs & Foundations',
+                thickness: '4"',
+                base: '4-6" compacted stone',
+                use: 'Sheds, patios, light storage',
+                priceRange: [8, 12],
+                pricingType: 'sqft'
+            },
+            'slab-garage': {
+                name: 'Garage Slab (Thicker/Reinforced)',
+                category: 'Slabs & Foundations',
+                thickness: '4-6"',
+                base: '6" compacted stone',
+                extras: 'Vapor barrier, thickened edges',
+                priceRange: [10, 16],
+                pricingType: 'sqft'
+            },
+            'foundation': {
+                name: 'Foundation w/ Footings',
+                category: 'Slabs & Foundations',
+                thickness: 'Engineered specs',
+                footings: 'Per building code',
+                notes: 'Requires engineering specs',
+                priceRange: [14, 22],
+                pricingType: 'sqft'
+            },
+            'walkway-standard': {
+                name: 'Standard Walkway/Sidewalk',
+                category: 'Walkways & Sidewalks',
+                thickness: '4"',
+                base: '4" compacted stone',
+                finish: 'Broom or light texture',
+                priceRange: [12, 18],
+                pricingType: 'sqft'
+            },
+            'walkway-decorative': {
+                name: 'Decorative Walkway (Curves/Border)',
+                category: 'Walkways & Sidewalks',
+                thickness: '4"',
+                extras: 'Decorative borders, curved forms, difficult access',
+                finish: 'Custom finish',
+                priceRange: [16, 22],
+                pricingType: 'sqft'
+            },
+            'steps-simple': {
+                name: 'Simple Steps (1-2 Steps)',
+                category: 'Concrete Steps',
+                notes: 'Basic rectangular design',
+                priceRange: [600, 1200],
+                pricingType: 'fixed'
+            },
+            'steps-multiple': {
+                name: 'Multiple Steps/Landing',
+                category: 'Concrete Steps',
+                notes: '3+ steps with landing platform',
+                priceRange: [1200, 2500],
+                pricingType: 'fixed'
+            },
+            'steps-decorative': {
+                name: 'Decorative/Custom Steps',
+                category: 'Concrete Steps',
+                finish: 'Stamped, stained, or custom shape',
+                notes: 'Premium finish and custom design',
+                priceRange: [2000, 3500],
+                pricingType: 'fixed'
+            },
+            'sealing': {
+                name: 'Concrete Sealing',
+                category: 'Sealing & Resurfacing',
+                process: 'Surface cleaning and sealer application',
+                notes: 'Protects and enhances appearance',
+                priceRange: [1.5, 3.5],
+                pricingType: 'sqft'
+            },
+            'resurface-light': {
+                name: 'Light Resurfacing/Skim Coat',
+                category: 'Sealing & Resurfacing',
+                process: 'Surface prep + thin overlay',
+                thickness: '1/8" - 1/4"',
+                notes: 'Covers minor imperfections',
+                priceRange: [6, 10],
+                pricingType: 'sqft'
+            },
+            'resurface-heavy': {
+                name: 'Heavy Repair + Decorative Overlay',
+                category: 'Sealing & Resurfacing',
+                process: 'Crack repair + decorative overlay',
+                thickness: '1/4" - 3/8"',
+                finish: 'Stamped or textured',
+                priceRange: [10, 14],
+                pricingType: 'sqft'
+            }
+        };
+
+        function toggleDimensionCalculator() {
+            const calculator = document.getElementById('dimensionCalculator');
+            if (calculator.style.display === 'none') {
+                calculator.style.display = 'block';
+            } else {
+                calculator.style.display = 'none';
+            }
+        }
+
+        function updateDimensionInputs() {
+            const shapeType = document.getElementById('shapeType').value;
+            
+            document.getElementById('rectangleInputs').style.display = shapeType === 'rectangle' ? 'block' : 'none';
+            document.getElementById('circleInputs').style.display = shapeType === 'circle' ? 'block' : 'none';
+            document.getElementById('triangleInputs').style.display = shapeType === 'triangle' ? 'block' : 'none';
+            
+            calculateAreaFromDimensions();
+        }
+
+        function calculateAreaFromDimensions() {
+            const shapeType = document.getElementById('shapeType').value;
+            let area = 0;
+            
+            if (shapeType === 'rectangle') {
+                const length = parseFloat(document.getElementById('length').value) || 0;
+                const width = parseFloat(document.getElementById('width').value) || 0;
+                area = length * width;
+            } else if (shapeType === 'circle') {
+                const diameter = parseFloat(document.getElementById('diameter').value) || 0;
+                const radius = diameter / 2;
+                area = Math.PI * radius * radius;
+            } else if (shapeType === 'triangle') {
+                const base = parseFloat(document.getElementById('base').value) || 0;
+                const height = parseFloat(document.getElementById('height').value) || 0;
+                area = (base * height) / 2;
+            }
+            
+            document.getElementById('calculatedArea').textContent = area.toFixed(2) + ' sq ft';
+            document.getElementById('area').value = area.toFixed(2);
+            calculateQuote();
+        }
+
+        function updateSpecs() {
+            const projectType = document.getElementById('projectType').value;
+            const specsDisplay = document.getElementById('specsDisplay');
+            const specsContent = document.getElementById('specsContent');
+            const priceRangeControl = document.getElementById('priceRangeControl');
+            const priceSlider = document.getElementById('pricePerSqFt');
+            const minPriceLabel = document.getElementById('minPrice');
+            const maxPriceLabel = document.getElementById('maxPrice');
+            const areaGroup = document.getElementById('areaGroup');
+            const areaLabel = document.getElementById('areaLabel');
+            const priceDisplay = document.getElementById('priceDisplay');
+
+            if (!projectType) {
+                specsDisplay.style.display = 'none';
+                priceRangeControl.style.display = 'none';
+                return;
+            }
+
+            const specs = projectSpecs[projectType];
+            specsDisplay.style.display = 'block';
+            priceRangeControl.style.display = 'block';
+
+            // Handle different pricing types
+            if (specs.pricingType === 'fixed') {
+                areaGroup.style.display = 'none';
+                areaLabel.textContent = 'N/A - Fixed Price';
+                document.getElementById('area').value = 1; // Set to 1 for calculation purposes
+            } else {
+                areaGroup.style.display = 'block';
+                areaLabel.textContent = 'Area (square feet)';
+            }
+
+            // Update price slider range
+            priceSlider.min = specs.priceRange[0];
+            priceSlider.max = specs.priceRange[1];
+            priceSlider.value = ((specs.priceRange[0] + specs.priceRange[1]) / 2).toFixed(1);
+            
+            // Adjust step size based on range
+            if (specs.priceRange[1] - specs.priceRange[0] > 100) {
+                priceSlider.step = '50';
+            } else if (specs.priceRange[1] - specs.priceRange[0] > 10) {
+                priceSlider.step = '1';
+            } else {
+                priceSlider.step = '0.5';
+            }
+
+            if (specs.pricingType === 'fixed') {
+                minPriceLabel.textContent = `$${specs.priceRange[0].toLocaleString()}`;
+                maxPriceLabel.textContent = `$${specs.priceRange[1].toLocaleString()}`;
+                priceDisplay.parentElement.innerHTML = `Total Project Cost: <span id="priceDisplay" style="color: var(--primary-yellow); font-weight: 700; font-size: 1.1rem;">$${parseFloat(priceSlider.value).toLocaleString()}</span>`;
+            } else {
+                minPriceLabel.textContent = `$${specs.priceRange[0]}`;
+                maxPriceLabel.textContent = `$${specs.priceRange[1]}`;
+                priceDisplay.parentElement.innerHTML = `Price per Square Foot: <span id="priceDisplay" style="color: var(--primary-yellow); font-weight: 700; font-size: 1.1rem;">$${parseFloat(priceSlider.value).toFixed(2)}</span>`;
+            }
+
+            updatePriceDisplay();
+
+            let html = '';
+            for (let [key, value] of Object.entries(specs)) {
+                if (key !== 'name' && key !== 'priceRange' && key !== 'pricingType' && key !== 'category') {
+                    const label = key.charAt(0).toUpperCase() + key.slice(1);
+                    html += `
+                        <div class="spec-item">
+                            <span>${label}:</span>
+                            <span class="spec-value">${value}</span>
+                        </div>
+                    `;
+                }
+            }
+
+            specsContent.innerHTML = html;
+            calculateQuote();
+        }
+
+        function updatePriceDisplay() {
+            const projectType = document.getElementById('projectType').value;
+            if (!projectType) return;
+            
+            const specs = projectSpecs[projectType];
+            const price = parseFloat(document.getElementById('pricePerSqFt').value);
+            
+            if (specs.pricingType === 'fixed') {
+                document.getElementById('priceDisplay').textContent = `$${price.toLocaleString()}`;
+            } else {
+                document.getElementById('priceDisplay').textContent = `$${price.toFixed(2)}`;
+            }
+        }
+
+        function toggleAddon(addonName) {
+            const checkbox = document.getElementById(addonName);
+            const slider = document.getElementById(addonName + 'Slider');
+            
+            if (checkbox.checked) {
+                slider.classList.add('active');
+            } else {
+                slider.classList.remove('active');
+            }
+        }
+
+        function updateAddonPrice(addonName) {
+            const range = document.getElementById(addonName + 'Range');
+            const valueDisplay = document.getElementById(addonName + 'Value');
+            const value = parseFloat(range.value);
+
+            if (addonName === 'pump') {
+                valueDisplay.textContent = `$${value.toLocaleString()}`;
+            } else if (addonName === 'fiber') {
+                valueDisplay.textContent = `$${value.toFixed(2)}/yd³`;
+            } else if (addonName === 'extraRebar') {
+                valueDisplay.textContent = `$${value.toFixed(2)}/sq ft`;
+            } else if (addonName === 'sealer') {
+                valueDisplay.textContent = `$${value.toFixed(2)}/sq ft`;
+            } else if (addonName === 'removal') {
+                valueDisplay.textContent = `$${value.toFixed(2)}/sq ft`;
+            }
+        }
+
+        function calculateQuote() {
+            const projectType = document.getElementById('projectType').value;
+            const area = parseFloat(document.getElementById('area').value) || 0;
+
+            if (!projectType) {
+                document.getElementById('baseCost').textContent = '$0.00';
+                document.getElementById('addonsCost').textContent = '$0.00';
+                document.getElementById('totalCost').textContent = '$0.00';
+                document.getElementById('breakdown').style.display = 'none';
+                return;
+            }
+
+            const specs = projectSpecs[projectType];
+            const priceValue = parseFloat(document.getElementById('pricePerSqFt').value);
+            
+            let baseCost = 0;
+            if (specs.pricingType === 'fixed') {
+                baseCost = priceValue; // For fixed pricing (steps), the slider value IS the total cost
+            } else {
+                if (area === 0) {
+                    document.getElementById('baseCost').textContent = '$0.00';
+                    document.getElementById('addonsCost').textContent = '$0.00';
+                    document.getElementById('totalCost').textContent = '$0.00';
+                    document.getElementById('breakdown').style.display = 'none';
+                    return;
+                }
+                baseCost = area * priceValue; // Per square foot pricing
+            }
+
+            let addonsCost = 0;
+            let breakdownHTML = '';
+
+            // Calculate add-ons using slider values
+            if (document.getElementById('removal').checked) {
+                const pricePerSqFt = parseFloat(document.getElementById('removalRange').value);
+                const cost = area * pricePerSqFt;
+                addonsCost += cost;
+                breakdownHTML += `<div class="spec-item"><span>Removal/Demo ($${pricePerSqFt.toFixed(2)}/sq ft):</span><span class="spec-value">$${cost.toFixed(2)}</span></div>`;
+            }
+
+            if (document.getElementById('pump').checked) {
+                const cost = parseFloat(document.getElementById('pumpRange').value);
+                addonsCost += cost;
+                breakdownHTML += `<div class="spec-item"><span>Pump Truck:</span><span class="spec-value">$${cost.toFixed(2)}</span></div>`;
+            }
+
+            if (document.getElementById('fiber').checked) {
+                const thickness = parseFloat(specs.thickness) || 4;
+                const yards = (area * thickness / 12) / 27;
+                const pricePerYard = parseFloat(document.getElementById('fiberRange').value);
+                const cost = yards * pricePerYard;
+                addonsCost += cost;
+                breakdownHTML += `<div class="spec-item"><span>Fiber (${yards.toFixed(1)} yd³ @ $${pricePerYard.toFixed(2)}/yd³):</span><span class="spec-value">$${cost.toFixed(2)}</span></div>`;
+            }
+
+            if (document.getElementById('extraRebar').checked) {
+                const pricePerSqFt = parseFloat(document.getElementById('extraRebarRange').value);
+                const cost = area * pricePerSqFt;
+                addonsCost += cost;
+                breakdownHTML += `<div class="spec-item"><span>Extra Rebar ($${pricePerSqFt.toFixed(2)}/sq ft):</span><span class="spec-value">$${cost.toFixed(2)}</span></div>`;
+            }
+
+            if (document.getElementById('sealer').checked) {
+                const pricePerSqFt = parseFloat(document.getElementById('sealerRange').value);
+                const cost = area * pricePerSqFt;
+                addonsCost += cost;
+                breakdownHTML += `<div class="spec-item"><span>Sealer ($${pricePerSqFt.toFixed(2)}/sq ft):</span><span class="spec-value">$${cost.toFixed(2)}</span></div>`;
+            }
+
+            const totalCost = baseCost + addonsCost;
+
+            document.getElementById('baseCost').textContent = `$${baseCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('addonsCost').textContent = `$${addonsCost.toFixed(2)}`;
+            document.getElementById('totalCost').textContent = `$${totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+            if (breakdownHTML) {
+                document.getElementById('breakdown').style.display = 'block';
+                document.getElementById('breakdownContent').innerHTML = breakdownHTML;
+            } else {
+                document.getElementById('breakdown').style.display = 'none';
+            }
+        }
+
+        function generatePDF() {
+            const projectType = document.getElementById('projectType').value;
+            const area = parseFloat(document.getElementById('area').value) || 0;
+
+            if (!projectType) {
+                showToast('Please select a project type');
+                return;
+            }
+
+            const specs = projectSpecs[projectType];
+            
+            if (specs.pricingType !== 'fixed' && area === 0) {
+                showToast('Please enter the area');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const clientName = document.getElementById('clientName').value || 'N/A';
+            const clientPhone = document.getElementById('clientPhone').value || 'N/A';
+            const clientEmail = document.getElementById('clientEmail').value || 'N/A';
+            const projectAddress = document.getElementById('projectAddress').value || 'N/A';
+            const notes = document.getElementById('notes').value;
+
+            const businessPhone = document.getElementById('businessPhone').value || '(555) 987-6543';
+            const businessEmail = document.getElementById('businessEmail').value || 'info@chrisrocksconcrete.com';
+            const licenseNumber = document.getElementById('licenseNumber').value;
+
+            const priceValue = parseFloat(document.getElementById('pricePerSqFt').value);
+            const baseCost = parseFloat(document.getElementById('baseCost').textContent.replace(/[$,]/g, ''));
+            const addonsCost = parseFloat(document.getElementById('addonsCost').textContent.replace(/[$,]/g, ''));
+            const totalCost = parseFloat(document.getElementById('totalCost').textContent.replace(/[$,]/g, ''));
+
+            const today = new Date();
+            const validUntil = new Date(today);
+            validUntil.setDate(validUntil.getDate() + 30);
+            const quoteNumber = Math.floor(Math.random() * 90000000) + 10000000;
+
+            // Get dimensions if available
+            let dimensionsText = '';
+            const shapeType = document.getElementById('shapeType').value;
+            if (shapeType === 'rectangle') {
+                const length = document.getElementById('length').value;
+                const width = document.getElementById('width').value;
+                if (length && width) {
+                    dimensionsText = `${length}' × ${width}'`;
+                }
+            } else if (shapeType === 'circle') {
+                const diameter = document.getElementById('diameter').value;
+                if (diameter) {
+                    dimensionsText = `${diameter}' diameter (circle)`;
+                }
+            } else if (shapeType === 'triangle') {
+                const base = document.getElementById('base').value;
+                const height = document.getElementById('height').value;
+                if (base && height) {
+                    dimensionsText = `Base: ${base}', Height: ${height}' (triangle)`;
+                }
+            }
+            if (!dimensionsText && area > 0) {
+                const side = Math.sqrt(area);
+                dimensionsText = `~${side.toFixed(1)}' × ${side.toFixed(1)}' (est.)`;
+            }
+
+            // Header with dark background - COMPACT VERSION
+            doc.setFillColor(26, 26, 26);
+            doc.rect(0, 0, 210, 20, 'F');
+            
+            // Add logo image
+            if (logoDataURL) {
+                try {
+                    // Add logo - adjust size to fit header nicely
+                    doc.addImage(logoDataURL, 'PNG', 12, 4, 45, 12);
+                } catch (e) {
+                    console.error('Failed to add logo to PDF:', e);
+                    // Fallback to text
+                    doc.setTextColor(255, 215, 0);
+                    doc.setFontSize(16);
+                    doc.setFont(undefined, 'bold');
+                    doc.text('CHRIS ROCKS CONCRETE', 20, 12);
+                }
+            } else {
+                // Fallback to text if logo not loaded
+                doc.setTextColor(255, 215, 0);
+                doc.setFontSize(16);
+                doc.setFont(undefined, 'bold');
+                doc.text('CHRIS ROCKS CONCRETE', 20, 12);
+            }
+            
+            doc.setFontSize(8);
+            doc.setTextColor(224, 224, 224);
+            doc.setFont(undefined, 'normal');
+            let headerRight = `${businessPhone} • ${businessEmail}`;
+            if (licenseNumber) {
+                headerRight += ` • ${licenseNumber}`;
+            }
+            doc.text(headerRight, 198, 12, { align: 'right' });
+
+            // ESTIMATE title
+            doc.setFillColor(255, 215, 0);
+            doc.rect(0, 20, 210, 10, 'F');
+            doc.setTextColor(26, 26, 26);
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.text('ESTIMATE', 105, 27, { align: 'center' });
+
+            let yPos = 34;
+
+            // Two column layout for client info and estimate details
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.text('CLIENT INFORMATION', 20, yPos);
+            doc.text('ESTIMATE DETAILS', 110, yPos);
+            
+            yPos += 7;
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+
+            // Left column - Client info
+            doc.text(`${clientName}`, 20, yPos);
+            doc.text(`Date: ${today.toLocaleDateString()}`, 110, yPos);
+            yPos += 4;
+            doc.text(`${clientPhone}`, 20, yPos);
+            doc.text(`Quote #: ${quoteNumber}`, 110, yPos);
+            yPos += 4;
+            if (clientEmail !== 'N/A') {
+                doc.text(`${clientEmail}`, 20, yPos);
+            }
+            doc.text(`Valid Until: ${validUntil.toLocaleDateString()}`, 110, yPos);
+            yPos += 4;
+            const addressLines = doc.splitTextToSize(projectAddress, 80);
+            doc.text(addressLines, 20, yPos);
+            doc.text(`Slab Type: ${specs.name}`, 110, yPos);
+
+            yPos = Math.max(58 + (addressLines.length * 4) + 8, 75);
+
+            // PROJECT SPECIFICATIONS section
+            doc.setFillColor(240, 240, 240);
+            doc.rect(15, yPos, 180, 8, 'F');
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.text('PROJECT SPECIFICATIONS', 20, yPos + 5.5);
+            yPos += 12;
+
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+            
+            if (specs.pricingType !== 'fixed') {
+                doc.text(`Area: ${area.toFixed(2)} sq ft`, 20, yPos);
+                
+                if (dimensionsText) {
+                    doc.text(`Dimensions: ${dimensionsText}`, 75, yPos);
+                }
+                yPos += 5;
+            }
+
+            if (specs.thickness) {
+                doc.text(`Thickness: ${specs.thickness}`, 20, yPos);
+            }
+            
+            if (specs.base) {
+                doc.text(`Base: ${specs.base}`, 75, yPos);
+                yPos += 5;
+            }
+
+            if (specs.finish) {
+                doc.text(`Finish: ${specs.finish}`, 20, yPos);
+                yPos += 5;
+            }
+
+            // Calculate concrete required
+            let cubicYards = 0;
+            if (specs.pricingType !== 'fixed' && specs.thickness) {
+                const thicknessNum = parseFloat(specs.thickness) || 4;
+                cubicYards = ((area * thicknessNum / 12) / 27);
+                doc.text(`Concrete Required: ${cubicYards.toFixed(2)} cubic yards`, 20, yPos);
+                yPos += 5;
+            }
+
+            yPos += 3;
+
+            // MATERIALS BREAKDOWN - Always show this
+            doc.setFillColor(240, 240, 240);
+            doc.rect(15, yPos, 180, 8, 'F');
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.text('MATERIALS BREAKDOWN', 20, yPos + 5.5);
+            yPos += 12;
+
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+
+            // Always include base concrete
+            if (cubicYards > 0) {
+                doc.text(`• Standard Concrete Mix`, 20, yPos);
+                doc.text(`${cubicYards.toFixed(2)} cubic yards`, 185, yPos, { align: 'right' });
+                yPos += 5;
+                
+                if (specs.base) {
+                    const baseYards = cubicYards; // Approximation
+                    doc.text(`• ${specs.base}`, 20, yPos);
+                    doc.text(`${baseYards.toFixed(2)} cubic yards`, 185, yPos, { align: 'right' });
+                    yPos += 5;
+                }
+            }
+
+            // Add selected add-ons to materials
+            if (document.getElementById('fiber').checked) {
+                const fiberPounds = (cubicYards * 2).toFixed(2);
+                doc.text(`• Fiber Reinforcement`, 20, yPos);
+                doc.text(`${fiberPounds} pounds`, 185, yPos, { align: 'right' });
+                yPos += 5;
+            }
+
+            if (document.getElementById('extraRebar').checked) {
+                doc.text(`• Rebar Reinforcement`, 20, yPos);
+                doc.text(`${area.toFixed(0)} sq ft`, 185, yPos, { align: 'right' });
+                yPos += 5;
+            }
+
+            if (document.getElementById('sealer').checked) {
+                doc.text(`• Concrete Sealer`, 20, yPos);
+                doc.text(`${area.toFixed(0)} sq ft`, 185, yPos, { align: 'right' });
+                yPos += 5;
+            }
+
+            if (document.getElementById('removal').checked) {
+                doc.text(`• Demolition & Removal`, 20, yPos);
+                doc.text(`${area.toFixed(0)} sq ft`, 185, yPos, { align: 'right' });
+                yPos += 5;
+            }
+
+            if (document.getElementById('pump').checked) {
+                doc.text(`• Concrete Pump Service`, 20, yPos);
+                doc.text(`1 unit`, 185, yPos, { align: 'right' });
+                yPos += 5;
+            }
+
+            yPos += 3;
+
+            // COST BREAKDOWN
+            doc.setFillColor(240, 240, 240);
+            doc.rect(15, yPos, 180, 8, 'F');
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.text('COST BREAKDOWN', 20, yPos + 5.5);
+            yPos += 12;
+
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+
+            if (specs.pricingType === 'fixed') {
+                doc.text(`${specs.name}`, 20, yPos);
+                doc.text(`$${baseCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 185, yPos, { align: 'right' });
+                yPos += 6;
+            } else {
+                doc.text(`${specs.name} (${area.toFixed(0)} sq ft @ $${priceValue.toFixed(2)}/sq ft)`, 20, yPos);
+                doc.text(`$${baseCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 185, yPos, { align: 'right' });
+                yPos += 6;
+            }
+
+            // Add-ons
+            if (addonsCost > 0) {
+                const breakdownContent = document.getElementById('breakdownContent');
+                if (breakdownContent) {
+                    const items = breakdownContent.querySelectorAll('.spec-item');
+                    items.forEach(item => {
+                        const label = item.querySelector('span:first-child').textContent;
+                        const value = item.querySelector('.spec-value').textContent;
+                        doc.text(`${label}`, 20, yPos);
+                        doc.text(value, 185, yPos, { align: 'right' });
+                        yPos += 5;
+                    });
+                }
+            }
+
+            yPos += 2;
+            doc.setLineWidth(0.3);
+            doc.line(20, yPos, 185, yPos);
+            yPos += 5;
+
+            // Subtotal
+            doc.setFont(undefined, 'normal');
+            doc.text('Subtotal:', 20, yPos);
+            doc.text(`$${(baseCost + addonsCost).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 185, yPos, { align: 'right' });
+            yPos += 8;
+
+            // TOTAL
+            doc.setFillColor(255, 215, 0);
+            doc.rect(15, yPos - 4, 180, 10, 'F');
+            doc.setTextColor(26, 26, 26);
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('TOTAL ESTIMATE:', 20, yPos + 2);
+            doc.text(`$${totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, 185, yPos + 2, { align: 'right' });
+            
+            yPos += 15;
+
+            // Additional Notes if provided
+            if (notes) {
+                doc.setTextColor(0, 0, 0);
+                doc.setFillColor(240, 240, 240);
+                doc.rect(15, yPos, 180, 8, 'F');
+                doc.setFontSize(11);
+                doc.setFont(undefined, 'bold');
+                doc.text('ADDITIONAL NOTES', 20, yPos + 5.5);
+                yPos += 12;
+
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'normal');
+                const splitNotes = doc.splitTextToSize(notes, 165);
+                doc.text(splitNotes, 20, yPos);
+                yPos += (splitNotes.length * 5) + 8;
+            }
+
+            // IMPORTANT NOTES & TERMS
+            doc.setTextColor(0, 0, 0);
+            doc.setFillColor(240, 240, 240);
+            doc.rect(15, yPos, 180, 8, 'F');
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.text('IMPORTANT NOTES & TERMS', 20, yPos + 5.5);
+            yPos += 12;
+
+            doc.setFontSize(8);
+            doc.setFont(undefined, 'normal');
+            
+            const terms = [
+                '• Price includes materials, labor, site preparation, and standard finishing',
+                '• Site must be accessible for equipment and properly graded',
+                '• Quote valid for 30 days from estimate date',
+                '• 50% deposit required upon acceptance to schedule work',
+                '• Final payment due upon project completion',
+                '• Weather delays may affect timeline - we will communicate any changes',
+                '• Work performed by licensed and insured contractor',
+                '• Proper curing procedures will be followed for optimal strength and durability',
+                '• Client responsible for obtaining necessary permits if required'
+            ];
+
+            terms.forEach(term => {
+                const termLines = doc.splitTextToSize(term, 165);
+                doc.text(termLines, 20, yPos);
+                yPos += (termLines.length * 4) + 1;
+            });
+
+            yPos += 15; // Increased spacing before signature lines
+
+            // Signature line
+            doc.setLineWidth(0.3);
+            doc.line(20, yPos, 90, yPos);
+            doc.line(120, yPos, 185, yPos);
+            yPos += 5;
+            doc.setFontSize(8);
+            doc.text('Client Signature', 20, yPos);
+            doc.text('Date', 120, yPos);
+
+            // Save PDF
+            const fileName = `ChrisRocksConcrete_Quote_${quoteNumber}_${today.toISOString().split('T')[0]}.pdf`;
+            doc.save(fileName);
+
+            showToast('Professional PDF generated successfully!');
+        }
+
+        function resetForm() {
+            document.getElementById('projectType').value = '';
+            document.getElementById('area').value = '';
+            document.getElementById('clientName').value = '';
+            document.getElementById('clientPhone').value = '';
+            document.getElementById('clientEmail').value = '';
+            document.getElementById('projectAddress').value = '';
+            document.getElementById('notes').value = '';
+            
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            
+            // Hide all addon sliders
+            document.querySelectorAll('.addon-slider-container').forEach(slider => {
+                slider.classList.remove('active');
+            });
+            
+            // Reset addon slider values to defaults
+            document.getElementById('removalRange').value = 3;
+            document.getElementById('pumpRange').value = 1150;
+            document.getElementById('fiberRange').value = 10;
+            document.getElementById('extraRebarRange').value = 1.125;
+            document.getElementById('sealerRange').value = 2.25;
+            
+            // Update addon displays
+            updateAddonPrice('removal');
+            updateAddonPrice('pump');
+            updateAddonPrice('fiber');
+            updateAddonPrice('extraRebar');
+            updateAddonPrice('sealer');
+            
+            document.getElementById('specsDisplay').style.display = 'none';
+            document.getElementById('priceRangeControl').style.display = 'none';
+            document.getElementById('breakdown').style.display = 'none';
+            
+            calculateQuote();
+            showToast('Form reset');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
